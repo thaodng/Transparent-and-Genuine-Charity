@@ -53,9 +53,9 @@ const About = () => {
         </div>
       </div>
 
-      <div className="mx-auto p-4 text-monospace text-center text-secondary">
+      <div className="w-75 mx-auto p-4 text-monospace text-center text-secondary">
         <Link to={'/charities'}>
-          <button className="btn btn-primary active" type="button">View our charity partners</button>
+          <button className="btn btn-primary active d-block w-100" type="button">View our charity partners</button>
         </Link>
       </div>
 

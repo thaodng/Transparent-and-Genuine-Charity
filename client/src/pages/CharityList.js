@@ -1,14 +1,18 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import axios from 'axios';
+import Charity from '../components/Charity';
+import { PUBLIC_API_URL } from '../apis/config';
 
 const CharityList = () => {
+  const charities = useRef([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [charities, setCharities] = useState([]);
+  const [filterCharities, setFilterCharities] = useState([]);
 
   useEffect(() => {
     const getCharities = async () => {
-      const { data: { charitySearchResults } } = await axios.get('https://api.justgiving.com/2605491e/v1/charity/search');
-      setCharities(charitySearchResults);
+      const { data: { charitySearchResults } } = await axios.get(PUBLIC_API_URL);
+      charities.current = charitySearchResults;
+      setFilterCharities(charitySearchResults);
     };
     getCharities();
   }, []);
@@ -16,9 +20,14 @@ const CharityList = () => {
 
   const onSearch = (e) => {
     setSearchTerm(e.target.value);
-  };
 
-  console.log(charities);
+    const newFilters = charities.current.filter(charity =>
+      charity.charityDisplayName
+        .toLowerCase()
+        .includes(e.target.value.toLowerCase()));
+
+    setFilterCharities(newFilters);
+  };
 
   return (
     <div>
@@ -37,9 +46,21 @@ const CharityList = () => {
       </form>
 
       <div className="container">
-
+        <div className="row">
+          {
+            filterCharities.map(({ charityId, charityDisplayName, description, logoUrl, registrationNumber }) =>
+              <Charity
+                key={charityId}
+                charityId={charityId}
+                charityDisplayName={charityDisplayName}
+                description={description}
+                logoUrl={logoUrl}
+                registrationNumber={registrationNumber}
+              />
+            )
+          }
+        </div>
       </div>
-
     </div>
   )
 }
