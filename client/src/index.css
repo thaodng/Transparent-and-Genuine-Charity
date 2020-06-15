@@ -11,3 +11,24 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.bg-blue {
+  background: #2699FB;
+}
+
+.middle {
+  display: block;
+  margin: 0 auto;
+}
+
+.row-hl {
+  background: #f4f4f4;
+  height: 250px;
+}
+
+.card-img-top {
+  width: 125px;
+  height: 125px;
+  object-fit: scale-down;
+  border: white;
+}

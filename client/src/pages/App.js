@@ -1,11 +1,11 @@
 import React from 'react';
-import CharityLayout from '../CharityLayout';
+import Layout from '../components/Layout';
 
 const App = () => {
   return (
-    <CharityLayout>
+    <Layout>
       
-    </CharityLayout>
+    </Layout>
   );
 }
 
