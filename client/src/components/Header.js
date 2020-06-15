@@ -15,11 +15,8 @@ const Header = () => {
       </div>
 
       <div className="p-0 d-flex flex-row align-items-center d-inline-block text-white">
-        <Link to={'/Login'}>
+        <Link to={'/login'}>
           <button className="btn bg-blue text-white btn-sm" type="button">LOGIN</button>
-        </Link>
-        <Link to={'/About'}>
-          <button className="btn bg-blue text-white btn-sm" type="button">ABOUT US</button>
         </Link>
 
         <a className={"text-white mx-3"} href={"http://www.twitter.com"}>

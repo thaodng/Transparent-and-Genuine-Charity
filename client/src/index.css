@@ -16,6 +16,10 @@ code {
   background: #2699FB;
 }
 
+.min-h {
+  min-height: 500px;
+}
+
 .middle {
   display: block;
   margin: 0 auto;
