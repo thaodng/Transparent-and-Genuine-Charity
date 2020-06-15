@@ -14,7 +14,7 @@ const Charity = ({ charityId, charityDisplayName, description, logoUrl, registra
           <p className="card-text text-justify">{description}</p>
         </div>
         <div className="text-center text-secondary card-footer bg-transparent border-white mb-1">
-          <Link to={`/donate/${charityId}`} key={charityId}>
+          <Link to="/donate" key={charityId}>
             <button className="btn btn-primary active w-100" type="button">Donate to this charity</button>
           </Link>
         </div>

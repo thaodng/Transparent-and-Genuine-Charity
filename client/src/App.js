@@ -4,6 +4,8 @@ import Layout from './components/Layout';
 import Home from './pages/Home';
 import About from './pages/About';
 import CharityList from './pages/CharityList';
+import Donate from './pages/Donate';
+import ThankYou from './pages/ThankYou';
 
 const App = () => {
   return (
@@ -12,6 +14,8 @@ const App = () => {
         <Route exact path="/" component={Home} />
         <Route exact path="/about" component={About} />
         <Route exact path="/charities" component={CharityList} />
+        <Route exact path="/donate" component={Donate} />
+        <Route exact path="/thankyou" component={ThankYou} />
       </Switch>
     </Layout>
   );

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTwitter, faGithub } from '@fortawesome/free-brands-svg-icons';
+import { faGithub } from '@fortawesome/free-brands-svg-icons';
 import logo from '../assets/images/logo.png';
 
 const Header = () => {
@@ -16,13 +16,10 @@ const Header = () => {
 
       <div className="p-0 d-flex flex-row align-items-center d-inline-block text-white">
         <Link to={'/login'}>
-          <button className="btn bg-blue text-white btn-sm" type="button">LOGIN</button>
+          <button className="btn bg-blue text-white btn-md" type="button">LOGIN</button>
         </Link>
 
-        <a className={"text-white mx-3"} href={"http://www.twitter.com"}>
-          <FontAwesomeIcon icon={faTwitter} />
-        </a>
-        <a className={"text-white mr-5"} href={"https://github.com/"}>
+        <a className={"text-white mr-5"} href={"https://github.com/ngduythao"}>
           <FontAwesomeIcon icon={faGithub} />
         </a>
 
