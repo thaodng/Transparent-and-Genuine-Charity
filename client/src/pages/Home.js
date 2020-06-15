@@ -1,7 +1,20 @@
-import React from 'react'
+import React, { useEffect, useContext } from 'react'
+import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { CharityContext } from '../context/CharityContext';
+import { PUBLIC_API_URL } from '../apis/config';
 
 const Home = () => {
+  const { setCharities } = useContext(CharityContext);
+
+  useEffect(() => {
+    const getCharities = async () => {
+      const { data: { charitySearchResults } } = await axios.get(PUBLIC_API_URL);
+      setCharities(charitySearchResults);
+    };
+    getCharities();
+  }, [setCharities]);
+
   return (
     <div className="">
       <h1 className="p-4 display-3 text-center">Charity, Blockchain</h1>
@@ -20,7 +33,7 @@ const Home = () => {
             <Link className="col-md" to={'/charities'}>
               <button className="btn btn-primary active d-block w-100" type="button">View our charity partners</button>
             </Link>
-            
+
             <Link className="col-md" to={'/about'}>
               <button className="btn btn-primary active d-block w-100" type="button">About us</button>
             </Link>
