@@ -14,8 +14,9 @@ const CharityList = () => {
   useEffect(() => {
     const getCharities = async () => {
       const { data: { charitySearchResults } } = await axios.get(PUBLIC_API_URL);
-      setCharities(charitySearchResults);
-      setFilterCharities(charitySearchResults);
+      const res = charitySearchResults.filter(ct => ct.logoUrl !== "" && ct.description !== "" );
+      setCharities(res);
+      setFilterCharities(res);
     };
     getCharities();
   }, [setCharities]);

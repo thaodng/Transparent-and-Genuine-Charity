@@ -1,9 +1,10 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
 
+
 const Home = () => {
   return (
-    <div className="container" >
+    <div className="container" >      
       <h1 className="p-4 display-3 text-center">Charity, Blockchain</h1>
 
       <h4 className="m-2 text-center text-secondary">
