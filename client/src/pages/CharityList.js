@@ -8,15 +8,18 @@ import { PUBLIC_API_URL } from '../apis/config';
 const CharityList = () => {
   const { charities, setCharities } = useContext(CharityContext);
 
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCharities, setFilterCharities] = useState([]);
+
 
   useEffect(() => {
     const getCharities = async () => {
       const { data: { charitySearchResults } } = await axios.get(PUBLIC_API_URL);
-      const res = charitySearchResults.filter(ct => ct.logoUrl !== "" && ct.description !== "" );
+      const res = charitySearchResults.filter(ct => ct.logoUrl !== "" && ct.description !== "");
       setCharities(res);
       setFilterCharities(res);
+      setLoading(false);
     };
     getCharities();
   }, [setCharities]);
@@ -33,7 +36,7 @@ const CharityList = () => {
   };
 
 
-  const options = ['Recently donate', 'Requests donate'];
+  const options = ['List of donors', 'List of requests'];
   const [selectedOption, setSelectedOption] = useState(options[0]);
 
   const onSelect = (eventKey) => {
@@ -43,7 +46,7 @@ const CharityList = () => {
   return (
     <>
       {
-        filterCharities.length === 0
+        loading
           ?
           <div className="d-flex justify-content-center text-center">
             <Spinner animation="border" role="status">
@@ -57,7 +60,7 @@ const CharityList = () => {
 
             <div className="container">
               <div className="text-right mb-2">
-                <button type="button" class="btn btn-outline-primary">Create donate</button>
+                <button type="button" className="btn btn-outline-primary">Create donate</button>
               </div>
 
               <div className="row">
