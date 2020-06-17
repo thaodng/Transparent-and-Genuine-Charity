@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios';
 import { Link, useHistory } from 'react-router-dom';
-import Message from '../components/Message';
 import web3 from '../contracts/web3';
 import factory from '../contracts/factory';
 import { LOGO_URL, MY_API_URL, REGISTER_CHARITY } from '../apis/config';
 
 const RegisterCharity = () => {
   const history = useHistory();
+  const [loading, setLoading] = useState(true);
   const [account, setAccount] = useState('');
   const [message, setMessage] = useState('');
   const [charityDisplayName, setCharityDisplayName] = useState('');
@@ -24,6 +24,7 @@ const RegisterCharity = () => {
       setAccount(accounts[0]);
     };
     getInfo();
+    setLoading(false);
   }, [])
 
 
@@ -56,6 +57,9 @@ const RegisterCharity = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    console.log(logo.name);
+    setLoading(true);
+    setMessage('Please wait. We are handling your request!!');
     try {
       await axios.post(REGISTER_CHARITY,
         { registrationNumber, charityDisplayName, description, logo: logoUrl }
@@ -67,18 +71,24 @@ const RegisterCharity = () => {
     } catch (error) {
       setMessage(error.message);
     }
+    setMessage('');
+    setLoading(false);
   };
 
   return (
     <div className="container">
-      {message ? <Message msg={message} /> : null}
       <div className="p-2 w-50 mx-auto text-center">
         {
           <img style={{ width: '100%' }} src={logoUrl} alt='logo' />
         }
       </div>
-
       <div className="w-75 mx-auto mt-2 p-2 text-left text-secondary">
+        {
+          message &&
+          <div className="alert alert-primary" role="alert">
+            {message}
+          </div>
+        }
         <h4 className="text-center mb-4">Charity Infomation</h4>
         <form onSubmit={onSubmit}>
           <div className="form-group">
@@ -129,14 +139,25 @@ const RegisterCharity = () => {
             />
             <label className="custom-file-label" htmlFor="validatedCustomFile">{filename}</label>
           </div>
-
-          <p className="py-4 text-monospace text-right text-secondary">
-            <Link to={'/charities'}>
-              <button className="btn btn-primary active" type="button">CANCEL</button>
-            </Link>
-            {" "}
-            <button className="btn btn-primary active" type="submit">REGRISTER</button>
-          </p>
+          {
+            loading ?
+              <div className="text-right">
+                <div className="spinner-grow text-primary" role="status" />
+                <div className="spinner-grow text-secondary" role="status" />
+                <div className="spinner-grow text-danger" role="status" />
+                <div className="spinner-grow text-dark" role="status" />
+                <div className="spinner-grow text-info" role="status" />
+              </div> :
+              <>
+                <p className="py-4 text-monospace text-right text-secondary">
+                  <Link to={'/charities'}>
+                    <button className="btn btn-primary active" type="button">CANCEL</button>
+                  </Link>
+                  {" "}
+                  <button className="btn btn-primary active" type="submit">REGRISTER</button>
+                </p>
+              </>
+          }
         </form>
       </div>
     </div>
