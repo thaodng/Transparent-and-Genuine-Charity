@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { DropdownButton, Dropdown, Spinner } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import { CharityContext } from '../context/CharityContext';
 import Charity from '../components/Charity';
 import { PUBLIC_API_URL } from '../apis/config';
+import factory from '../contracts/factory';
 
 const CharityList = () => {
   const { charities, setCharities } = useContext(CharityContext);
@@ -20,6 +22,9 @@ const CharityList = () => {
       setCharities(res);
       setFilterCharities(res);
       setLoading(false);
+
+      const charities = await factory.methods.getDeployedCharities().call();
+      console.log(charities);
     };
     getCharities();
   }, [setCharities]);
@@ -36,7 +41,7 @@ const CharityList = () => {
   };
 
 
-  const options = ['List of donors', 'List of requests'];
+  const options = ['All charities', 'My charities'];
   const [selectedOption, setSelectedOption] = useState(options[0]);
 
   const onSelect = (eventKey) => {
@@ -60,7 +65,9 @@ const CharityList = () => {
 
             <div className="container">
               <div className="text-right mb-2">
-                <button type="button" className="btn btn-outline-primary">Create donate</button>
+                <Link to={'/register-charity'}>
+                  <button type="button" className="btn btn-outline-primary">Register new charity organization</button>
+                </Link>
               </div>
 
               <div className="row">

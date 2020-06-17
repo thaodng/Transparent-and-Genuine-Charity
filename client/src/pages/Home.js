@@ -1,37 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom';
-import web3 from '../contracts/web3';
-import factory from '../contracts/factory';
+
 
 const Home = () => {
-  const [account, setAccount] = useState('');
-  const [message, setMessage] = useState('');
-
-  useEffect(() => {
-    const getInfo = async () => {
-      const accounts = await web3.eth.getAccounts();
-      const charities = await factory.methods.getDeployedCharities().call();
-      setAccount(accounts[0]);
-      console.log(charities);
-    };
-    getInfo();
-  }, [])
-
-  const onClick = async () => {
-    try {
-      await factory.methods
-        .createCharity('100')
-        .send({
-          from: account
-        });
-
-    } catch (error) {
-      setMessage(error.message);
-    }
-  };
-
-  console.log(message);
-
   return (
     <div className="container" >
       <h1 className="p-4 display-3 text-center">Charity, Blockchain</h1>
@@ -53,7 +24,7 @@ const Home = () => {
           <Link className="col-md" to={'/about'}>
             <button className="btn btn-primary active d-block w-100" type="button">About us</button>
           </Link>
-          <button className="btn btn-primary active d-block w-100" type="button" onClick={onClick}>About us</button>
+          {/* <button className="btn btn-primary active d-block w-100" type="button" onClick={onClick}>About us</button> */}
 
         </div>
       </div>

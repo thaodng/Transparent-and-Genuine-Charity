@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import Home from './pages/Home';
 import About from './pages/About';
 import CharityList from './pages/CharityList';
+import RegisterCharity from './pages/RegisterCharity';
 import Donate from './pages/Donate';
 import Prepare from './pages/Prepare';
 import ThankYou from './pages/ThankYou';
@@ -15,6 +16,7 @@ const App = () => {
         <Route exact path="/" component={Home} />
         <Route exact path="/about" component={About} />
         <Route exact path="/charities" component={CharityList} />
+        <Route exact path="/register-charity" component={RegisterCharity} />
         <Route exact path="/donate" component={Donate} />
         <Route exact path="/prepare" component={Prepare} />
         <Route exact path="/thankyou" component={ThankYou} />
