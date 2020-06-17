@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import Message from '../components/Message';
 import web3 from '../contracts/web3';
-
+import factory from '../contracts/factory';
 import { LOGO_URL, MY_API_URL, REGISTER_CHARITY } from '../apis/config';
 
 const RegisterCharity = () => {
+  const history = useHistory();
   const [account, setAccount] = useState('');
   const [message, setMessage] = useState('');
   const [charityDisplayName, setCharityDisplayName] = useState('');
@@ -31,48 +32,41 @@ const RegisterCharity = () => {
     setLogo(file);
     setFilename(file.name);
 
-    /*Get Signed Url and upload image to AWS s3 */
-    const { name, type } = file;
-    const result = await axios.post(`${MY_API_URL}/getUrl`, { name, type });
-    const { success, returnUrl: { signedUrl, imageUrl } } = result.data;
+    try {
+      /*Get Signed Url and upload image to AWS s3 */
+      const { name, type } = file;
+      const result = await axios.post(`${MY_API_URL}/getUrl`, { name, type });
+      const { success, returnUrl: { signedUrl, imageUrl } } = result.data;
 
-    // ex: https://my-final-project-ptudwnc.s3-ap-southeast-1.amazonaws.com/ac-milan-2007.jpg
-    if (success) {
-      await axios.put(signedUrl, file, {
-        headers: {
-          'Content-Type': type
-        }
-      });
-    };
+      // ex: https://my-final-project-ptudwnc.s3-ap-southeast-1.amazonaws.com/ac-milan-2007.jpg
+      if (success) {
+        await axios.put(signedUrl, file, {
+          headers: {
+            'Content-Type': type
+          }
+        });
+      };
 
-    setLogoUrl(imageUrl);
+      setLogoUrl(imageUrl);
+    } catch (error) {
+      setMessage(error.message);
+    }
+
   };
 
   const onSubmit = async (e) => {
     e.preventDefault();
-  
-    const { data } = await axios.post(REGISTER_CHARITY,
-      {
-        registrationNumber,
-        charityDisplayName,
-        description,
-        logo: logoUrl
-      }
-    );
-    
-    console.log(data);
+    try {
+      await axios.post(REGISTER_CHARITY,
+        { registrationNumber, charityDisplayName, description, logo: logoUrl }
+      );
 
-    // try {
-    //   await factory.methods
-    //     .createCharity(minumum)
-    //     .send({
-    //       from: account
-    //     });
+      await factory.methods.createCharity(minumum).send({ from: account });
 
-    // } catch (error) {
-    //   setMessage(error.message);
-    // }
-
+      history.goBack();
+    } catch (error) {
+      setMessage(error.message);
+    }
   };
 
   return (
