@@ -2,6 +2,7 @@ const HDWalletProvider = require('@truffle/hdwallet-provider');
 const compiledFactory = require('./build/CharityFactory.json');
 const Web3 = require('web3');
 const { MNEMONIC, INFURA_API } = require('../config');
+// const fs = require('fs');
 
 const provider = new HDWalletProvider(
   MNEMONIC,
@@ -20,6 +21,13 @@ const deploy = async () => {
     .send({ from: accounts[0] }); 
 
   console.log('Contract deployed to', result.options.address);
+
+  // const abi = JSON.stringify(JSON.parse(compiledFactory).abi)
+  // fs.writeFile('abi.txt', abi, (err) => {
+  //   if (err) throw err;
+  //   console.log('Saved!');
+  // });  
+  // console.log(JSON.parse(JSON.stringify(abi)));
 };
 
 deploy();
