@@ -3,11 +3,11 @@ pragma solidity >=0.4.22 <0.7.0;
 // create new type request
 struct Request {
     address payable recipient;
-    uint256 value;
+    uint value;
     string description;
     bool completed;
     mapping(address => bool) approvals; // mapping can't iterate
-    uint256 approvalCount; // number of donors have approved this request, this mean not voing equal to decline request
+    uint approvalCount; // number of donors have approved this request, this mean not voing equal to decline request
 }
 
 
@@ -16,7 +16,7 @@ contract CharityFactory {
     Charity[] public deployedCharities;
 
     // create new contract
-    function createCharity(uint256 minimum) public {
+    function createCharity(uint minimum) public {
         Charity newCharity = new Charity(msg.sender, minimum);
         deployedCharities.push(newCharity);
     }
@@ -28,12 +28,12 @@ contract CharityFactory {
 
 contract Charity {
     address public admin;
-    uint256 public minimumContribution;
+    uint public minimumContribution;
     mapping(address => bool) donors;
-    uint256 public donorsCount;
+    uint public donorsCount;
     Request[] public requests;
 
-    constructor(address creator, uint256 minimum) public {
+    constructor(address creator, uint minimum) public {
         admin = creator;
         minimumContribution = minimum;
     }
@@ -56,7 +56,7 @@ contract Charity {
 
     function createRequest(
         address payable recipient,
-        uint256 value,
+        uint value,
         string memory description
     ) public restricted {
         // when we create new object, it exists in memory
@@ -72,7 +72,7 @@ contract Charity {
     }
 
     // make sure single contributor can't vote multiple times on single spending request
-    function approveRequest(uint256 index) public {
+    function approveRequest(uint index) public {
         Request storage request = requests[index]; // point to the same memory
 
         require(donors[msg.sender], "Only contributor can approve request!!");
@@ -86,7 +86,7 @@ contract Charity {
     }
 
     // only manager can do this 'transaction'
-    function finalizeRequest(uint256 index) public restricted {
+    function finalizeRequest(uint index) public restricted {
         Request storage request = requests[index]; // point to the same memory
 
         require(
@@ -99,7 +99,7 @@ contract Charity {
         request.completed = true;
     }
 
-    function getRequestsCount() public view returns (uint256) {
+    function getRequestsCount() public view returns (uint) {
         return requests.length;
     }
 }
