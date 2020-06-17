@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react'
+import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { faEthereum } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Message from '../components/Message';
-
 import web3 from '../contracts/web3';
 
+import { REGISTER_CHARITY } from '../apis/config';
 
 const RegisterCharity = () => {
   const [account, setAccount] = useState('');
   const [message, setMessage] = useState('');
   const [charityDisplayName, setCharityDisplayName] = useState('');
   const [registrationNumber, setRegistrationNumber] = useState('');
-  const [ethAddress, setEthAddress] = useState('');
   const [description, setDescription] = useState('');
   const [minumum, setMinumum] = useState('');
   const [logo, setLogo] = useState('');
@@ -34,18 +34,21 @@ const RegisterCharity = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    console.log(charityDisplayName, registrationNumber, ethAddress, description, logo);
-    formData.append('charityDisplayName', charityDisplayName);
-    formData.append('registrationNumber', registrationNumber);
-    formData.append('ethAddress', ethAddress);
-    formData.append('description', description);
-    formData.append('minumum', minumum);
-    formData.append('logo', logo); // key:image, value: file
+  
+    const { data } = await axios.post(REGISTER_CHARITY,
+      {
+        registrationNumber,
+        charityDisplayName,
+        description,
+        logo: logo.name
+      }
+    );
+
+    console.log(data);
 
     // try {
     //   await factory.methods
-    //     .createCharity('100')
+    //     .createCharity(minumum)
     //     .send({
     //       from: account
     //     });
@@ -86,15 +89,6 @@ const RegisterCharity = () => {
           </div>
           <div className="form-group">
             <input
-              id="ethAddress"
-              className="form-control form-control-m"
-              type="text"
-              placeholder="Ethereum address"
-              onChange={(e) => setEthAddress(e.target.value)}
-            />
-          </div>
-          <div className="form-group">
-            <input
               id="minimum"
               className="form-control form-control-m"
               type="text"
@@ -113,7 +107,7 @@ const RegisterCharity = () => {
             />
           </div>
 
-          <div class="custom-file mb-2">
+          <div className="custom-file mb-2">
             <input
               id="validatedCustomFile"
               className="custom-file-input"
@@ -121,7 +115,7 @@ const RegisterCharity = () => {
               onChange={onChoosenLogo}
               required
             />
-            <label class="custom-file-label" htmlFor="validatedCustomFile">{filename}</label>
+            <label className="custom-file-label" htmlFor="validatedCustomFile">{filename}</label>
           </div>
 
           <p className="py-4 text-monospace text-right text-secondary">
