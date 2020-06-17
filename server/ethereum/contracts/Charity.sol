@@ -6,8 +6,24 @@ struct Request {
     uint256 value;
     string description;
     bool completed;
-    mapping(address => bool) approvals;
-    uint256 approvalCount; // number of donors have approve this request
+    mapping(address => bool) approvals; // mapping can't iterate
+    uint256 approvalCount; // number of donors have approved this request, this mean not voing equal to decline request
+}
+
+
+// contract factory deploy another contract
+contract CharityFactory {
+    Charity[] public deployedCharities;
+
+    // create new contract
+    function createCharity(uint256 minimum) public {
+        Charity newCharity = new Charity(msg.sender, minimum);
+        deployedCharities.push(newCharity);
+    }
+
+    function getDeployedCharities() public view returns (Charity[] memory) {
+        return deployedCharities;
+    }
 }
 
 contract Charity {
@@ -17,10 +33,12 @@ contract Charity {
     uint256 public donorsCount;
     Request[] public requests;
 
-    constructor(uint256 minimum) public {
+    constructor(address creator, uint256 minimum) public {
+        admin = creator;
         minimumContribution = minimum;
     }
 
+    // middleware
     modifier restricted() {
         require(msg.sender == admin, "Only admin can do this transaction");
         _;
@@ -54,24 +72,34 @@ contract Charity {
     }
 
     // make sure single contributor can't vote multiple times on single spending request
-    function approveRequest(uint index) public {
-        Request storage request = requests[index]; // point the same memory
+    function approveRequest(uint256 index) public {
+        Request storage request = requests[index]; // point to the same memory
 
         require(donors[msg.sender], "Only contributor can approve request!!");
-        require(!request.approvals[msg.sender], "You have already approved this request!");
+        require(
+            !request.approvals[msg.sender],
+            "You have already approved this request!"
+        );
 
         request.approvals[msg.sender] = true;
         request.approvalCount++;
     }
 
     // only manager can do this 'transaction'
-    function finalizeRequest(uint index) public restricted {
-        Request storage request = requests[index];
+    function finalizeRequest(uint256 index) public restricted {
+        Request storage request = requests[index]; // point to the same memory
 
-        require(request.approvalCount > (donorsCount / 2), "The number of approval donors are not enough!!");
+        require(
+            request.approvalCount > (donorsCount / 2),
+            "The number of approval donors are not enough!!"
+        );
         require(!request.completed, "This request has been completed");
 
         request.recipient.transfer(request.value);
         request.completed = true;
+    }
+
+    function getRequestsCount() public view returns (uint256) {
+        return requests.length;
     }
 }
