@@ -26,23 +26,19 @@ const RegisterCharity = () => {
   }, [])
 
 
-  const onChoosenLogo = (e) => {
+  const onChoosenLogo = async (e) => {
     const file = e.target.files[0];
     setLogo(file);
     setFilename(file.name);
-  };
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
-  
     /*Get Signed Url and upload image to AWS s3 */
-    const { name, type } = logo;
+    const { name, type } = file;
     const result = await axios.post(`${MY_API_URL}/getUrl`, { name, type });
     const { success, returnUrl: { signedUrl, imageUrl } } = result.data;
 
     // ex: https://my-final-project-ptudwnc.s3-ap-southeast-1.amazonaws.com/ac-milan-2007.jpg
     if (success) {
-      await axios.put(signedUrl, logo, {
+      await axios.put(signedUrl, file, {
         headers: {
           'Content-Type': type
         }
@@ -50,16 +46,22 @@ const RegisterCharity = () => {
     };
 
     setLogoUrl(imageUrl);
+  };
 
+  const onSubmit = async (e) => {
+    e.preventDefault();
+  
     const { data } = await axios.post(REGISTER_CHARITY,
       {
         registrationNumber,
         charityDisplayName,
         description,
-        logo: imageUrl
+        logo: logoUrl
       }
     );
     
+    console.log(data);
+
     // try {
     //   await factory.methods
     //     .createCharity(minumum)
