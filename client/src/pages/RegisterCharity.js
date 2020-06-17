@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { faEthereum } from '@fortawesome/free-brands-svg-icons';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Message from '../components/Message';
 import web3 from '../contracts/web3';
 
-import { REGISTER_CHARITY } from '../apis/config';
+import { LOGO_URL, MY_API_URL, REGISTER_CHARITY } from '../apis/config';
 
 const RegisterCharity = () => {
   const [account, setAccount] = useState('');
@@ -16,6 +14,7 @@ const RegisterCharity = () => {
   const [description, setDescription] = useState('');
   const [minumum, setMinumum] = useState('');
   const [logo, setLogo] = useState('');
+  const [logoUrl, setLogoUrl] = useState(LOGO_URL);
   const [filename, setFilename] = useState('Choosen logo');
 
   useEffect(() => {
@@ -28,24 +27,39 @@ const RegisterCharity = () => {
 
 
   const onChoosenLogo = (e) => {
-    setLogo(e.target.files[0]);
-    setFilename(e.target.files[0].name);
+    const file = e.target.files[0];
+    setLogo(file);
+    setFilename(file.name);
   };
 
   const onSubmit = async (e) => {
     e.preventDefault();
   
+    /*Get Signed Url and upload image to AWS s3 */
+    const { name, type } = logo;
+    const result = await axios.post(`${MY_API_URL}/getUrl`, { name, type });
+    const { success, returnUrl: { signedUrl, imageUrl } } = result.data;
+
+    // ex: https://my-final-project-ptudwnc.s3-ap-southeast-1.amazonaws.com/ac-milan-2007.jpg
+    if (success) {
+      await axios.put(signedUrl, logo, {
+        headers: {
+          'Content-Type': type
+        }
+      });
+    };
+
+    setLogoUrl(imageUrl);
+
     const { data } = await axios.post(REGISTER_CHARITY,
       {
         registrationNumber,
         charityDisplayName,
         description,
-        logo: logo.name
+        logo: imageUrl
       }
     );
-
-    console.log(data);
-
+    
     // try {
     //   await factory.methods
     //     .createCharity(minumum)
@@ -62,8 +76,10 @@ const RegisterCharity = () => {
   return (
     <div className="container">
       {message ? <Message msg={message} /> : null}
-      <div className="p-2 w-100 mx-auto text-center">
-        <FontAwesomeIcon className={"ml-4 text-dark"} size='6x' icon={faEthereum} />
+      <div className="p-2 w-50 mx-auto text-center">
+        {
+          <img style={{ width: '100%' }} src={logoUrl} alt='logo' />
+        }
       </div>
 
       <div className="w-75 mx-auto mt-2 p-2 text-left text-secondary">
