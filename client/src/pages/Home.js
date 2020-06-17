@@ -1,10 +1,22 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom';
-
+import web3 from '../contracts/web3';
+import factory from '../contracts/factory';
 
 const Home = () => {
+  useEffect(() => {
+    // const getAccount = async () => {
+    //   const accounts = await web3.eth.getAccounts();
+    // };
+    // getAccount();
+  }, [])
+
+  const onClick = async () => {
+    console.log(await factory.methods.getDeployedCharities().call());
+  };
+
   return (
-    <div className="container" >      
+    <div className="container" >
       <h1 className="p-4 display-3 text-center">Charity, Blockchain</h1>
 
       <h4 className="m-2 text-center text-secondary">
@@ -24,6 +36,7 @@ const Home = () => {
           <Link className="col-md" to={'/about'}>
             <button className="btn btn-primary active d-block w-100" type="button">About us</button>
           </Link>
+          <button className="btn btn-primary active d-block w-100" type="button" onClick={onClick}>About us</button>
         </div>
       </div>
     </div>
