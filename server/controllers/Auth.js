@@ -57,10 +57,7 @@ const sendTokenResponse = (statusCode, user, req, res, next) => {
 
   res.status(statusCode).json({
     success: true,
-    data: {
-      success: true,
-      user, // BAD CODE: i'm so lazy right now
-      token
-    }
+    user, // BAD CODE: i'm so lazy right now
+    token
   });
 }

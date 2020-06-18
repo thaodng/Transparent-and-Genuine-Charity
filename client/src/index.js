@@ -3,15 +3,18 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
 import './index.css';
 import { CharityProvider } from './context/CharityContext';
+import { AuthProvider } from './context/AuthContext';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
   <React.StrictMode>
     <Router>
-      <CharityProvider>
-        <App />
-      </CharityProvider>
+      <AuthProvider>
+        <CharityProvider>
+          <App />
+        </CharityProvider>
+      </AuthProvider>
     </Router>
   </React.StrictMode>,
   document.getElementById('root')

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import Item from '../components/Item';
 
 const items = [
@@ -48,7 +48,12 @@ const items = [
 ];
 
 const Prepare = () => {
+  const history = useHistory();
   const [totalAmount, setTotalAmount] = useState(0);
+
+  const onBack = () => {
+    history.goBack();
+  };
 
   return (
     <div className="p-4">
@@ -71,9 +76,7 @@ const Prepare = () => {
         <p className="h4 font-weight-bold">{totalAmount} $</p>
       </div>
       <p className="text-monospace text-right text-secondary">
-        <Link to={'/charities'}>
-          <button className="btn btn-primary active" type="button">Back</button>
-        </Link>
+        <button className="btn btn-primary active" type="button" onClick={onBack}>Back</button>
         {" "}
         <Link to={'/donate'}>
           <button className="btn btn-primary active" type="button">Donate Now</button>

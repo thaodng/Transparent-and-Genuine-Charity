@@ -1,47 +1,49 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useContext } from 'react'
 import axios from 'axios';
-import { Link, useHistory } from 'react-router-dom';
-import web3 from '../contracts/web3';
+import { AuthContext } from '../context/AuthContext';
+import { useHistory } from 'react-router-dom';
+import { API_AUTH } from '../apis/config';
 
 
 const Login = () => {
   const history = useHistory();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
-  const [account, setAccount] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
-  useEffect(() => {
-    const getInfo = async () => {
-      const accounts = await web3.eth.getAccounts();
-      setAccount(accounts[0]);
-    };
-    getInfo();
-    setLoading(false);
-  }, [])
-
+  const { authentication, setAuthentication } = useContext(AuthContext);
 
   const onSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage('Please wait. We are handling your request!!');
-    try {
-      // await axios.post('/user/login', { username, password });
-      console.log(account);
-      console.log(username, password);
 
-      await new Promise(resolve => {
-        setTimeout(resolve, 5000)
+    try {
+
+      const { data } = await axios.post(`${API_AUTH}/login`, {
+        ethAddress: authentication.ethAddress,
+        email: username,
+        password
       });
 
-      history.push('/charities');
-            
+      if (data.success) {
+        setAuthentication({
+          ...authentication,
+          isAuthenticated: true,
+          user: data.user,
+          token: data.token
+        });
+
+        setMessage('');
+        setTimeout(() => {
+          setLoading(false);
+          history.push('/');  
+        }, 1000);
+      }
     } catch (error) {
       setMessage(error.message);
+      setLoading(false);
     }
-    setMessage('');
-    setLoading(false);
   };
 
   return (

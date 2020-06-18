@@ -1,14 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import { DropdownButton, Dropdown, Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { CharityContext } from '../context/CharityContext';
+import { AuthContext } from '../context/AuthContext';
+import axios from 'axios';
 import Charity from '../components/Charity';
 import { PUBLIC_API_URL } from '../apis/config';
 import factory from '../contracts/factory';
 
 const CharityList = () => {
   const { charities, setCharities } = useContext(CharityContext);
+  const { authentication } = useContext(AuthContext);
 
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -17,17 +19,22 @@ const CharityList = () => {
 
   useEffect(() => {
     const getCharities = async () => {
-      const { data: { charitySearchResults } } = await axios.get(PUBLIC_API_URL);
-      const res = charitySearchResults.filter(ct => ct.logoUrl !== "" && ct.description !== "");
-      setCharities(res);
-      setFilterCharities(res);
-      setLoading(false);
+      if (charities.length === 0) {
+        const { data: { charitySearchResults } } = await axios.get(PUBLIC_API_URL);
+        // const res = charitySearchResults.filter(ct => ct.logoUrl !== "" && ct.description !== "");
+        setCharities(charitySearchResults);
+        setFilterCharities(charitySearchResults);
+      } else {
+        setFilterCharities(charities);
+      }
 
-      const charities = await factory.methods.getDeployedCharities().call();
-      console.log(charities);
+      const charitiesBlock = await factory.methods.getDeployedCharities().call();
+      console.log(charitiesBlock);
+
+      setLoading(false);
     };
     getCharities();
-  }, [setCharities]);
+  }, [charities, setCharities]);
 
   const onSearch = (e) => {
     setSearchTerm(e.target.value);
@@ -64,27 +71,35 @@ const CharityList = () => {
             </div>
 
             <div className="container">
-              <div className="text-right mb-2">
-                <Link to={'/register-charity'}>
-                  <button type="button" className="btn btn-outline-primary">Register new charity organization</button>
-                </Link>
-              </div>
+              { 
+                authentication.isAuthenticated && 
+                <div className="text-right mb-2">
+                  <Link to={'/register-charity'}>
+                    <button type="button" className="btn btn-outline-primary">Register new charity organization</button>
+                  </Link>
+                </div>
+              }
+
 
               <div className="row">
-                <div className="col-md-2">
-                  <DropdownButton
-                    id="dropdown-1"
-                    title={selectedOption}
-                    variant="primary active"
-                    onSelect={onSelect}
-                    alignRight
-                  >
-                    {
-                      options.map((opt, i) => <Dropdown.Item key={i} eventKey={i}>{opt}</Dropdown.Item>)
-                    }
-                  </DropdownButton>
-                </div>
-                <div className="col-md-10 pl-4">
+                {
+                  authentication.isAuthenticated && 
+                  <div className="col-md-2">
+                    <DropdownButton
+                      id="dropdown-1"
+                      title={selectedOption}
+                      variant="primary active"
+                      onSelect={onSelect}
+                      alignRight
+                    >
+                      {
+                        options.map((opt, i) => <Dropdown.Item key={i} eventKey={i}>{opt}</Dropdown.Item>)
+                      }
+                    </DropdownButton>
+                  </div>
+                }
+
+                <div className="col-md-10 mx-auto">
                   <form className='form-group'>
                     <input
                       className='form-control form-control'
