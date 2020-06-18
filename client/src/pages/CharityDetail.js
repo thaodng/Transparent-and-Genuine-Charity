@@ -1,13 +1,19 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { useParams } from "react-router-dom";
 import { DropdownButton, Dropdown, Spinner } from 'react-bootstrap';
+import { CharityContext } from '../context/CharityContext';
 import Detail from '../components/Detail';
 import DonorsTable from '../components/DonorsTable';
 import RequestTable from '../components/RequestTable';
 import Charity from '../contracts/charity';
 
-const CharityDetail = ({ location: { state } }) => {
+/* { location: { state } } */
+
+const CharityDetail = () => {
   const { id } = useParams();
+  const { charities } = useContext(CharityContext);
+  const state = charities.find(ch => ch._id === id);
+
   const [contract, setContract] = useState({});
   const { charityDisplayName, description, logo, registrationNumber, ethAddress } = state;
   const [members, setMembers] = useState([]);

@@ -1,5 +1,6 @@
 // BAD CODE
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import Charity from '../contracts/charity'
 import web3 from '../contracts/web3';
 
@@ -7,6 +8,7 @@ import web3 from '../contracts/web3';
 const Detail = ({ charityDisplayName, description, logo, registrationNumber, ethAddress,
   manager, balance, minimumContribution, donorsCount
 }) => {
+  const history = useHistory();
 
   const [value, setValue] = useState('');
 
@@ -21,7 +23,8 @@ const Detail = ({ charityDisplayName, description, logo, registrationNumber, eth
         from: accounts[0],
         value: web3.utils.toWei(value, 'ether')
       });
-
+      history.push('/charities');
+      
     } catch (err) {
       // setState({ errorMessage: err.message });
     }

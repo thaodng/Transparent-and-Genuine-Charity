@@ -3,8 +3,6 @@ import { Table } from 'react-bootstrap'
 
 const DonorsTable = ({ members }) => {
 
-  console.log(members);
-
   return (
     <div className="row">
       <div className="col-12">
