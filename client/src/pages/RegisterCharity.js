@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Link, useHistory } from 'react-router-dom';
 import web3 from '../contracts/web3';
 import factory from '../contracts/factory';
-import { LOGO_URL, MY_API_URL, REGISTER_CHARITY } from '../apis/config';
+import { LOGO_URL, MY_API, API_MANAGER } from '../apis/config';
 
 const RegisterCharity = () => {
   const history = useHistory();
@@ -36,7 +36,7 @@ const RegisterCharity = () => {
     try {
       /*Get Signed Url and upload image to AWS s3 */
       const { name, type } = file;
-      const result = await axios.post(`${MY_API_URL}/getUrl`, { name, type });
+      const result = await axios.post(`${MY_API}/getUrl`, { name, type });
       const { success, returnUrl: { signedUrl, imageUrl } } = result.data;
 
       // ex: https://my-final-project-ptudwnc.s3-ap-southeast-1.amazonaws.com/ac-milan-2007.jpg
@@ -61,7 +61,7 @@ const RegisterCharity = () => {
     setLoading(true);
     setMessage('Please wait. We are handling your request!!');
     try {
-      await axios.post(REGISTER_CHARITY,
+      await axios.post(API_MANAGER,
         { registrationNumber, charityDisplayName, description, logo: logoUrl }
       );
 
