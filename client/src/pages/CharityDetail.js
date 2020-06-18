@@ -7,6 +7,7 @@ import Detail from '../components/Detail';
 import DonorsTable from '../components/DonorsTable';
 import RequestTable from '../components/RequestTable';
 import Charity from '../contracts/charity';
+import web3 from '../contracts/web3';
 
 /* { location: { state } } */
 
@@ -68,7 +69,19 @@ const CharityDetail = () => {
     setSelectedOption(options[eventKey]);
   };
 
-  
+  const onApprove = async (index) => {
+    const charity = Charity(ethAddress);
+
+    const accounts = await web3.eth.getAccounts();
+    await charity.methods.approveRequest(index).send({
+      from: accounts[0]
+    });
+
+    const copyRequests = [...requests];
+    copyRequests[index].approvalCount = parseInt(copyRequests[index].approvalCount) +1;
+    setRequests(copyRequests);
+  };
+
   return (
     <div className="container">
       <div className="row">
@@ -122,7 +135,7 @@ const CharityDetail = () => {
       {
         (selectedOption === options[0] || selectedOption === options[2]) &&
         <>
-          <RequestTable requests={requests} donorsCount={contract.donorsCount} />
+          <RequestTable requests={requests} donorsCount={contract.donorsCount} onApprove={onApprove} />
           {
             isAuthenticated &&
             <Link

@@ -1,15 +1,16 @@
 import React from 'react'
 import web3 from '../contracts/web3';
 
-const RequestTable = ({ requests, donorsCount }) => {
-
+const RequestTable = ({ requests, donorsCount, onApprove }) => {
+  
   return (
     <div className="row">
       <div className="col-12">
-        <table className="table table-bordered text-center">
+        <table className="table table-bordered text-center table-responsive">
           <thead>
             <tr>
               <th scope="col">#</th>
+              <th scope="col">Description</th>
               <th scope="col">Recipient Address</th>
               <th scope="col">Amount</th>
               <th scope="col">Approvals</th>
@@ -23,6 +24,7 @@ const RequestTable = ({ requests, donorsCount }) => {
                 (
                   <tr key={request + index}>
                     <td>{index}</td>
+                    <td>{request.description}</td>
                     <td>
                       <a href={`https://rinkeby.etherscan.io/address/${request.recipient}`}>{request.recipient} </a>
                     </td>
@@ -35,9 +37,16 @@ const RequestTable = ({ requests, donorsCount }) => {
                     }
                     <td>
                       <div className="d-flex justify-content-around">
-                        <button type="button" className="btn btn-primary"><i className="far fa-eye"></i></button>
-                        <button type="button" className="btn btn-success" data-toggle="tooltip" data-placement="top" title="Tooltip on top"><i className="fas fa-check"></i></button>
-                        <button type="button" className="btn btn-danger"><i className="fas fa-times"></i></button>
+                        <button
+                          type="button"
+                          className="btn btn-primary"
+                          data-toggle="tooltip"
+                          data-placement="top"
+                          title="Accept request"
+                          onClick={() => onApprove(index)}
+                        >
+                          Accept
+                        </button>
                       </div>
                     </td>
                   </tr>
