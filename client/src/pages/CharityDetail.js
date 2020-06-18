@@ -20,6 +20,7 @@ const CharityDetail = () => {
   const [contract, setContract] = useState({});
   const { charityDisplayName, description, logo, registrationNumber, ethAddress } = state;
   const [members, setMembers] = useState([]);
+  const [requests, setRequests] = useState([]);
 
   useEffect(() => {
     const getSummary = async () => {
@@ -42,7 +43,16 @@ const CharityDetail = () => {
           })
       );
 
+      const rs = await Promise.all(
+        Array(parseInt(summary[5]))
+          .fill()
+          .map((_, index) => {
+            return charity.methods.requests(index).call();
+          })
+      );
+
       setMembers(ms);
+      setRequests(rs);
     }
     getSummary();
   }, [ethAddress]);
@@ -112,7 +122,7 @@ const CharityDetail = () => {
       {
         (selectedOption === options[0] || selectedOption === options[2]) &&
         <>
-          <RequestTable requestsCount={contract.requestsCount} />
+          <RequestTable requests={requests} donorsCount={contract.donorsCount} />
           {
             isAuthenticated &&
             <Link
