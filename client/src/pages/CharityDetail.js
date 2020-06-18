@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { DropdownButton, Dropdown, Spinner } from 'react-bootstrap';
+import { AuthContext } from '../context/AuthContext';
 import { CharityContext } from '../context/CharityContext';
 import Detail from '../components/Detail';
 import DonorsTable from '../components/DonorsTable';
@@ -13,6 +14,8 @@ const CharityDetail = () => {
   const { id } = useParams();
   const { charities } = useContext(CharityContext);
   const state = charities.find(ch => ch._id === id);
+
+  const { authentication: { isAuthenticated } } = useContext(AuthContext);
 
   const [contract, setContract] = useState({});
   const { charityDisplayName, description, logo, registrationNumber, ethAddress } = state;
@@ -55,7 +58,7 @@ const CharityDetail = () => {
     setSelectedOption(options[eventKey]);
   };
 
-
+  
   return (
     <div className="container">
       <div className="row">
@@ -108,9 +111,21 @@ const CharityDetail = () => {
 
       {
         (selectedOption === options[0] || selectedOption === options[2]) &&
-        <RequestTable requestsCount={contract.requestsCount} />
+        <>
+          <RequestTable requestsCount={contract.requestsCount} />
+          {
+            isAuthenticated &&
+            <Link
+              to={{
+                pathname: `/prepare`,
+                state: { ethAddress }
+              }}
+            >
+              <button className="btn btn-primary active w-100"> Create new request donate </button>
+            </Link>
+          }
+        </>
       }
-
     </div>
   )
 }

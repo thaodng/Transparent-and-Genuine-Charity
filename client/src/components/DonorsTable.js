@@ -18,7 +18,7 @@ const DonorsTable = ({ members }) => {
           <tbody>
             {
               members.map(({ member, value }, index) =>
-                <tr key={member}>
+                <tr key={member + index}>
                   <td>{index}</td>
                   <td><a href={`https://rinkeby.etherscan.io/address/${member}`}>{member} </a></td>
                   <td>{value / 1000000000000000000} eth</td>

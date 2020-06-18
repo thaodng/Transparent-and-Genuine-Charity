@@ -1,6 +1,10 @@
 import React, { useState } from 'react'
-import { useHistory, Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
+import { faEthereum } from '@fortawesome/free-brands-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Item from '../components/Item';
+import Charity from '../contracts/charity';
+import web3 from '../contracts/web3';
 
 const items = [
   {
@@ -8,48 +12,68 @@ const items = [
     "itemName": "Bicycle",
     "itemDescription": "Please donate so that we can provide bicycles as a form of transportation. For someone struggling to make ends meet, a reliable bicycle can provide a free and fast commute to work.",
     "itemImage": "https://s3.eu-west-2.amazonaws.com/donate-period/bicycle.png",
-    "itemPrice": 100,
+    "itemPrice": 0.5
   },
   {
     "id": 2,
     "itemName": "Blanket",
     "itemDescription": "Consider donating warm blankets for those living without regular or guaranteed access to heat.",
     "itemImage": "https://s3.eu-west-2.amazonaws.com/donate-period/blanket.png",
-    "itemPrice": 25,
+    "itemPrice": 0.4
   },
   {
     "id": 3,
     "itemName": "Clothes",
     "itemDescription": "Donate clothes to people who can’t afford to buy their own.",
     "itemImage": "https://s3.eu-west-2.amazonaws.com/donate-period/clothes.png",
-    "itemPrice": 10,
+    "itemPrice": 0.04
   },
   {
     "id": 4,
     "itemName": "Socks",
     "itemDescription": "Help people keep their feet warm and dry by donating socks for those who can’t afford to buy their own.",
     "itemImage": "https://s3.eu-west-2.amazonaws.com/donate-period/women-socks.png",
-    "itemPrice": 3,
+    "itemPrice": 0.04
   },
   {
     "id": 5,
     "itemName": "Stationery",
     "itemDescription": "Help give kids the best chance to succeed at school by donating stationery and school supplies.",
     "itemImage": "https://s3.eu-west-2.amazonaws.com/donate-period/pencil-case.png",
-    "itemPrice": 8,
-  },
-  {
-    "id": 6,
-    "itemName": "Toilet paper",
-    "itemDescription": "Toilet paper is in constant need, so if you can donate some you are guaranteed to make a difference.",
-    "itemImage": "https://s3.eu-west-2.amazonaws.com/donate-period/toilet-paper.png",
-    "itemPrice": 3,
+    "itemPrice": 0.01
   }
 ];
 
-const Prepare = () => {
+const Prepare = ({ location: { state } }) => {
   const history = useHistory();
+  const [countList, setCountList] = useState({});
+  const [description, setDescription] = useState('');
   const [totalAmount, setTotalAmount] = useState(0);
+  const [recipient, setRecipient] = useState('');
+
+
+  const onCreateRequest = async () => {
+    // setState({ loading: true, errorMessage: '' });
+    console.log(state.ethAddress);
+    const charity = Charity(state.ethAddress);
+    const totalString = totalAmount + '';
+
+    try {
+      const accounts = await web3.eth.getAccounts();
+
+      await charity.methods
+        .createRequest(recipient, web3.utils.toWei(totalString, 'ether'), description)
+        .send({ from: accounts[0] });
+
+      // history.push(`/charities`);
+    } catch (err) {
+      console.log(err.message);
+      // setState({ errorMessage: err.message });
+    }
+
+    // setState({ loading: false });
+    history.push('/thankyou');
+  };
 
   const onBack = () => {
     history.goBack();
@@ -67,20 +91,56 @@ const Prepare = () => {
             itemImage={itemImage}
             itemPrice={itemPrice}
             totalAmount={totalAmount}
+            countList={countList}
+            setCountList={setCountList}
             setTotalAmount={setTotalAmount}
+            setDescription={setDescription}
           />
         )
       }
+      <div className="p-2">
+        <div className="text-left text-secondary">
+          <h4 className="text-center mb-4">Recipient Infomation</h4>
+          <div className="form-group">
+            <input
+              className="form-control form-control-m"
+              type="text"
+              id="address"
+              placeholder="Recipient ethereum address"
+              value={recipient}
+              onChange={(e) => setRecipient(e.target.value)}
+            />
+          </div>
+          <div className="form-group">
+            <input
+              className="form-control form-control-m"
+              type="text"
+              id="description"
+              placeholder="Description"
+              value={description}
+              disabled
+            />
+          </div>
+        </div>
+      </div>
+
       <div className="text-right mb-4">
-        <p className="h4 text-secondary">Your total: </p>
-        <p className="h4 font-weight-bold">{totalAmount} $</p>
+        <p className="h4 text-secondary">Total: </p>
+        <p className="h4 font-weight-bold">
+          {totalAmount}
+          <FontAwesomeIcon className={"ml-3 text-dark"} size='1x' icon={faEthereum} />
+        </p>
       </div>
       <p className="text-monospace text-right text-secondary">
         <button className="btn btn-primary active" type="button" onClick={onBack}>Back</button>
         {" "}
-        <Link to={'/donate'}>
-          <button className="btn btn-primary active" type="button">Donate Now</button>
-        </Link>
+        <button
+          className="btn btn-primary active"
+          type="button"
+          onClick={onCreateRequest}
+        >
+          Create request
+          </button>
       </p>
     </div>
   )

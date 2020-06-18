@@ -1,26 +1,46 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEthereum } from '@fortawesome/free-brands-svg-icons';
 import { faArrowAltCircleDown, faArrowAltCircleUp } from '@fortawesome/free-regular-svg-icons';
 
-const Item = ({ itemName, itemDescription, itemImage, itemPrice, totalAmount, setTotalAmount }) => {
+const Item = ({ itemName, itemDescription, itemImage, itemPrice, totalAmount, countList, setCountList, setTotalAmount, setDescription }) => {
   const [count, setCount] = useState(0);
   const [total, setTotal] = useState(0);
 
   const onHandleDecrease = () => {
     if (count > 0) {
-      const newCount = count - 1; // must put in a different variable because right now state doesn't update
-      setCount(newCount);
-      setTotal(itemPrice * newCount);
-      setTotalAmount(totalAmount - itemPrice);
+      updateCount('dec');
     }
   };
 
-  const onHandleInscrese = () => {
-    const newCount = count + 1;
-    setCount(newCount);
-    setTotal(itemPrice * newCount);
-    setTotalAmount(totalAmount + itemPrice);
+  const onHandleInscrease = () => {
+    updateCount('inc')
   };
+
+  const updateCount = (type) => {
+    const opt = type === 'inc' ? 1 : -1;
+    const newCount = count + opt;
+
+    setCount(newCount);
+
+    setTotal(itemPrice * newCount);
+
+    setTotalAmount(totalAmount + opt * itemPrice);
+
+    const newCountlist = { ...countList, [itemName]: newCount };
+
+    /* VERY BAD CODE :(( */
+    let output = '';
+    for (let property in newCountlist) {
+      output += property + ': ' + newCountlist[property] + ', ';
+    }
+
+    setDescription(output);
+
+    setCountList(newCountlist);
+  };
+
+
 
   return (
     <div className="d-flex px-4 my-4 border rounded">
@@ -28,7 +48,8 @@ const Item = ({ itemName, itemDescription, itemImage, itemPrice, totalAmount, se
         <div className="d-flex flex-nowrap">
           <div className="p-0">
             <p className="m-0 p-2 pr-4 text-monospace text-center text-secondary">
-              ${itemPrice}
+              {itemPrice}
+              <FontAwesomeIcon size='1x' className="ml-2" icon={faEthereum} />
             </p>
             <div className="pr-4">
               <img src={itemImage} height="85" width="auto" alt={itemName} />
@@ -57,10 +78,13 @@ const Item = ({ itemName, itemDescription, itemImage, itemPrice, totalAmount, se
             className={"ml-2 text-secondary"}
             size='2x'
             icon={faArrowAltCircleUp}
-            onClick={() => onHandleInscrese()}
+            onClick={() => onHandleInscrease()}
           />
         </div>
-        <p className="m-0 pt-3 pr-2 text-monospace text-right text-secondary">${total}</p>
+        <p className="m-0 pt-3 pr-2 text-monospace text-right text-secondary">
+          {total}
+          <FontAwesomeIcon size='1x' className="ml-2" icon={faEthereum} />
+        </p>
       </div>
 
     </div>
