@@ -15,11 +15,15 @@ const Header = () => {
       </div>
 
       <div className="p-0 d-flex flex-row align-items-center d-inline-block text-white">
+        <Link to={'/charities'}>
+          <button className="btn bg-blue text-white btn-md" type="button">CHARITIES</button>
+        </Link>
+
         <Link to={'/login'}>
           <button className="btn bg-blue text-white btn-md" type="button">LOGIN</button>
         </Link>
 
-        <a className={"text-white mr-5"} href={"https://github.com/ngduythao"}>
+        <a className={"text-white ml-2 mr-5"} href={"https://github.com/ngduythao"}>
           <FontAwesomeIcon icon={faGithub} />
         </a>
 
