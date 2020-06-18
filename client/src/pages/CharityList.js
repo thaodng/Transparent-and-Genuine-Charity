@@ -5,7 +5,7 @@ import { CharityContext } from '../context/CharityContext';
 import { AuthContext } from '../context/AuthContext';
 import axios from 'axios';
 import Charity from '../components/Charity';
-import { PUBLIC_API_URL } from '../apis/config';
+import { API_CHARITY } from '../apis/config';
 import factory from '../contracts/factory';
 
 const CharityList = () => {
@@ -19,22 +19,31 @@ const CharityList = () => {
 
   useEffect(() => {
     const getCharities = async () => {
-      // if (charities.length === 0) {
-      //   const { data: { charitySearchResults } } = await axios.get(PUBLIC_API_URL);
-      //   // const res = charitySearchResults.filter(ct => ct.logoUrl !== "" && ct.description !== "");
-      //   setCharities(charitySearchResults);
-      //   setFilterCharities(charitySearchResults);
-      // } else {
-      //   setFilterCharities(charities);
-      // }
+      const { data } = await axios.get(API_CHARITY);
+      const charitiesEthAddress = await factory
+        .methods
+        .getDeployedCharities()
+        .call();
 
-      // const charitiesBlock = await factory.methods.getDeployedCharities().call();
-      // console.log(charitiesBlock);
+      // ["0xf14e7eD2cf8870EFdC6e241e13B3bA9b302AB9bD"]
+      // BADCODE again :((
+      const combineArr = [];
+      for (let i =0 ;i < charitiesEthAddress.length; i++) {
+        combineArr.push(
+          {
+            ...data.charities[i],
+            ethAddress: charitiesEthAddress[i]
+          }
+        );
+      }
+      
+      setCharities(combineArr);
+      setFilterCharities(combineArr);
 
       setLoading(false);
     };
     getCharities();
-  }, [charities, setCharities]);
+  }, []);
 
   const onSearch = (e) => {
     setSearchTerm(e.target.value);
@@ -54,7 +63,7 @@ const CharityList = () => {
   const onSelect = (eventKey) => {
     setSelectedOption(options[eventKey]);
   };
-  
+
   return (
     <>
       {
@@ -71,8 +80,8 @@ const CharityList = () => {
             </div>
 
             <div className="container">
-              { 
-                authentication.isAuthenticated && 
+              {
+                authentication.isAuthenticated &&
                 <div className="text-right mb-2">
                   <Link to={'/register-charity'}>
                     <button type="button" className="btn btn-outline-primary">Register new charity organization</button>
@@ -83,7 +92,7 @@ const CharityList = () => {
 
               <div className="row">
                 {
-                  authentication.isAuthenticated && 
+                  authentication.isAuthenticated &&
                   <div className="col-md-2">
                     <DropdownButton
                       id="dropdown-1"
@@ -114,14 +123,21 @@ const CharityList = () => {
 
               <div className="row">
                 {
-                  filterCharities.map(({ charityId, charityDisplayName, description, logoUrl, registrationNumber }) =>
+                  filterCharities.map(({
+                    _id,
+                    charityDisplayName,
+                    description,
+                    logo,
+                    registrationNumber,
+                    ethAddress
+                  }) =>
                     <Charity
-                      key={charityId}
-                      charityId={charityId}
+                      key={_id}
                       charityDisplayName={charityDisplayName}
                       description={description}
-                      logoUrl={logoUrl}
+                      logo={logo}
                       registrationNumber={registrationNumber}
+                      ethAddress={ethAddress}
                     />
                   )
                 }

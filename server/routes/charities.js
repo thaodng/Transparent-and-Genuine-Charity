@@ -5,7 +5,7 @@ const { protected } = require('../middleware/auth');
 const { createCharity, getCharities } = require('../controllers/Charity');
 
 router.route('/')
-  .post(protected, createCharity)
+  .post(createCharity)
   .get(getCharities);
 
 module.exports = router;

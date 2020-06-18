@@ -1,17 +1,18 @@
 import axios from 'axios';
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useContext } from 'react'
 import { Link, useHistory } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
-import { LOGO_URL, MY_API, API_MANAGER } from '../apis/config';
+import { MY_API, API_CHARITY } from '../apis/config';
 import factory from '../contracts/factory';
 
-// ethereum: { manager, minumim, registrationNumber}
+// create in
+// ethereum: { manager, minimum, registrationNumber}
 // database: { registrationNumber, charityDisplayName, description, logo}
 
 const RegisterCharity = () => {
   const history = useHistory();
-  const { authentication: { account } } = useContext(AuthContext);
+  const { authentication: { ethAddress } } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
 
@@ -21,7 +22,7 @@ const RegisterCharity = () => {
   const [minumum, setMinumum] = useState('');
   
   const [logo, setLogo] = useState(''); // file
-  const [logoUrl, setLogoUrl] = useState(LOGO_URL);
+  const [logoUrl, setLogoUrl] = useState('');
   const [filename, setFilename] = useState('Choosen logo');
 
   const onChoosenLogo = async (e) => {
@@ -58,18 +59,19 @@ const RegisterCharity = () => {
     setMessage('Please wait. We are handling your request!!');
 
     try {
-      await axios.post(API_MANAGER,
+      await axios.post(API_CHARITY,
         { registrationNumber, charityDisplayName, description, logo: logoUrl }
       );
 
-      await factory.methods.createCharity(minumum, registrationNumber).send({ from: account });
+      await factory.methods.createCharity(minumum, registrationNumber).send({ from: ethAddress });
 
+      // [data.statuses, ...allStatuses];
+      setMessage('');
       history.goBack();
     } catch (error) {
       setMessage(error.message);
     }
 
-    setMessage('');
     setLoading(false);
   };
 
@@ -77,7 +79,7 @@ const RegisterCharity = () => {
     <div className="container">
       <div className="p-2 w-50 mx-auto text-center">
         {
-          <img style={{ width: '100%' }} src={logoUrl} alt='logo' />
+          logoUrl && <img style={{ width: '100%' }} src={logoUrl} alt='logo' />
         }
       </div>
       <div className="w-75 mx-auto mt-2 p-2 text-left text-secondary">
