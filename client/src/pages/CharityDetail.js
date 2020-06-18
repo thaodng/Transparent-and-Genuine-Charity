@@ -4,12 +4,13 @@ import { DropdownButton, Dropdown, Spinner } from 'react-bootstrap';
 import Detail from '../components/Detail';
 import DonorsTable from '../components/DonorsTable';
 import RequestTable from '../components/RequestTable';
-import Charity from '../contracts/charity'
+import Charity from '../contracts/charity';
 
 const CharityDetail = ({ location: { state } }) => {
   const { id } = useParams();
   const [contract, setContract] = useState({});
   const { charityDisplayName, description, logo, registrationNumber, ethAddress } = state;
+  const [members, setMembers] = useState([]);
 
   useEffect(() => {
     const getSummary = async () => {
@@ -23,9 +24,19 @@ const CharityDetail = ({ location: { state } }) => {
         donorsCount: summary[4],
         requestsCount: summary[5],
       })
+
+      const ms = await Promise.all(
+        Array(parseInt(summary[4]))
+          .fill()
+          .map((_, index) => {
+            return charity.methods.members(index).call();
+          })
+      );
+
+      setMembers(ms);
     }
     getSummary();
-  }, [])
+  }, [ethAddress]);
 
   const [searchTerm, setSearchTerm] = useState('');
   const onSearch = (e) => {
@@ -34,10 +45,10 @@ const CharityDetail = ({ location: { state } }) => {
 
   const options = ['All information', 'Donors list', 'Requests list'];
   const [selectedOption, setSelectedOption] = useState(options[0]);
-
   const onSelect = (eventKey) => {
     setSelectedOption(options[eventKey]);
   };
+
 
   return (
     <div className="container">
@@ -69,20 +80,31 @@ const CharityDetail = ({ location: { state } }) => {
         </div>
       </div>
 
-      <Detail
-        charityDisplayName={charityDisplayName}
-        description={description}
-        logo={logo}
-        registrationNumber={registrationNumber}
-        ethAddress={ethAddress}
-        manager={contract.manager}
-        balance={contract.balance}
-        minimumContribution={contract.minimumContribution}
-      />
+      {
+        selectedOption === options[0] &&
+        <Detail
+          charityDisplayName={charityDisplayName}
+          description={description}
+          logo={logo}
+          registrationNumber={registrationNumber}
+          ethAddress={ethAddress}
+          manager={contract.manager}
+          balance={contract.balance}
+          minimumContribution={contract.minimumContribution}
+          donorsCount={contract.donorsCount}
+        />
+      }
 
-      <DonorsTable donorsCount={contract.donorsCount} />
-      
-      <RequestTable requestsCount={contract.requestsCount} />
+      {
+        (selectedOption === options[0] || selectedOption === options[1]) &&
+        <DonorsTable members={members} />
+      }
+
+      {
+        (selectedOption === options[0] || selectedOption === options[2]) &&
+        <RequestTable requestsCount={contract.requestsCount} />
+      }
+
     </div>
   )
 }

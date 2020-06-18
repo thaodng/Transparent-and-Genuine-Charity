@@ -1,9 +1,35 @@
 // BAD CODE
-import React from 'react';
+import React, { useState } from 'react';
+import Charity from '../contracts/charity'
+import web3 from '../contracts/web3';
+
 
 const Detail = ({ charityDisplayName, description, logo, registrationNumber, ethAddress,
-  manager, balance, minimumContribution
- }) => {
+  manager, balance, minimumContribution, donorsCount
+}) => {
+
+  const [value, setValue] = useState('');
+
+  const onSubmit = async () => {
+    const charity = Charity(ethAddress);
+
+    // setState({ loading: true, errorMessage: '' });
+
+    try {
+      const accounts = await web3.eth.getAccounts();
+      await charity.methods.donate().send({
+        from: accounts[0],
+        value: web3.utils.toWei(value, 'ether')
+      });
+
+    } catch (err) {
+      // setState({ errorMessage: err.message });
+    }
+
+    // setState({ loading: false, value: '' });
+    setValue('');
+  };
+
 
   return (
     <div className="col-md-12 d-flex align-items-stretch">
@@ -16,7 +42,7 @@ const Detail = ({ charityDisplayName, description, logo, registrationNumber, eth
           {'Contract address: '}
           <a
             href={`https://rinkeby.etherscan.io/address/${ethAddress}`}
-            className="text-monospace text-secondary">
+            className="text-monospace text-primary">
             {ethAddress}
           </a>
         </h6>
@@ -25,7 +51,7 @@ const Detail = ({ charityDisplayName, description, logo, registrationNumber, eth
           {'Manager address: '}
           <a
             href={`https://rinkeby.etherscan.io/address/${manager}`}
-            className="text-monospace text-secondary">
+            className="text-monospace text-primary">
             {manager}
           </a>
         </h6>
@@ -34,26 +60,37 @@ const Detail = ({ charityDisplayName, description, logo, registrationNumber, eth
 
         <div className="d-flex justify-content-start my-2">
           <p className="h5 text-secondary">Charity balance: </p>
-          <p className="h5 font-weight-bold">{balance} wei</p>
+          <p className="h5">{balance / 1000000000000000000} wei</p>
+        </div>
+
+        <div className="d-flex justify-content-start my-2">
+          <p className="h5 text-secondary">Number of donors: </p>
+          <p className="h5">{donorsCount} people</p>
         </div>
 
         <div className="row my-2">
           <div className="col-md-10">
-            <input
-              id="minimum"
-              className="form-control form-control-m"
-              type="text"
-              placeholder={`Contribute at least ${minimumContribution} wei to become an donor`}
-              onChange={() => { }}
-            />
+            <div className="input-group mb-3">
+              <input
+                id="minimum"
+                className="form-control form-control-m"
+                type="text"
+                placeholder={`Contribute at least ${minimumContribution} wei to become an donor`}
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+              />
+              <div className="input-group-append">
+                <span className="input-group-text" id="basic-addon2">ether</span>
+              </div>
+            </div>
+
           </div>
           <div className="col-md-2">
-            <button className="btn btn-primary active w-100">Contribute</button>
+            <button className="btn btn-primary active w-100" onClick={onSubmit}>Contribute</button>
           </div>
         </div>
       </div>
     </div>
-
   )
 }
 

@@ -43,7 +43,7 @@ const CharityList = () => {
       setLoading(false);
     };
     getCharities();
-  }, []);
+  }, [setCharities]);
 
   const onSearch = (e) => {
     setSearchTerm(e.target.value);
