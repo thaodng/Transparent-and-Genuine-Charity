@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom';
 
 
-const Charity = ({ _id, charityDisplayName, description, logo, registrationNumber, ethAddress }) => {
+const Charity = ({ charityId, charityDisplayName, description, logo, registrationNumber, ethAddress }) => {
 
   return (
     <div className="col-md-6 d-flex align-items-stretch p-2">
@@ -21,11 +21,17 @@ const Charity = ({ _id, charityDisplayName, description, logo, registrationNumbe
           <p className="card-text text-justify">{description}</p>
         </div>
         <div className="text-center text-secondary card-footer bg-transparent border-white mb-1">
-          <Link to="/prepare" key={_id}>
+          <Link
+            to={{
+              pathname: `/charities/${charityId}`,
+              state: { charityDisplayName, description, logo, registrationNumber, ethAddress }
+            }}
+            key={charityId}
+          >
             <button
               className="btn btn-primary active w-100"
               type="button">
-              Donate to this charity
+              View details
             </button>
           </Link>
         </div>

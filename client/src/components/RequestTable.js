@@ -2,10 +2,9 @@ import React from 'react'
 
 const RequestTable = () => {
   return (
-    <div class="container">
-      <div class="row">
-        <div class="col-12">
-          <table class="table table-bordered text-center">
+      <div className="row">
+        <div className="col-12">
+          <table className="table table-bordered text-center">
             <thead>
               <tr>
                 <th scope="col">#</th>
@@ -23,9 +22,9 @@ const RequestTable = () => {
                 <td>7/10</td>
                 <td>
                   <div className="d-flex justify-content-around">
-                    <button type="button" class="btn btn-primary"><i class="far fa-eye"></i></button>
-                    <button type="button" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Tooltip on top"><i class="fas fa-check"></i></button>
-                    <button type="button" class="btn btn-danger"><i class="fas fa-times"></i></button>
+                    <button type="button" className="btn btn-primary"><i className="far fa-eye"></i></button>
+                    <button type="button" className="btn btn-success" data-toggle="tooltip" data-placement="top" title="Tooltip on top"><i className="fas fa-check"></i></button>
+                    <button type="button" className="btn btn-danger"><i className="fas fa-times"></i></button>
                   </div>
                 </td>
               </tr>
@@ -36,9 +35,9 @@ const RequestTable = () => {
                 <td>7/10</td>
                 <td>
                   <div className="d-flex justify-content-around">
-                    <button type="button" class="btn btn-primary"><i class="far fa-eye"></i></button>
-                    <button type="button" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Tooltip on top"><i class="fas fa-check"></i></button>
-                    <button type="button" class="btn btn-danger"><i class="fas fa-times"></i></button>
+                    <button type="button" className="btn btn-primary"><i className="far fa-eye"></i></button>
+                    <button type="button" className="btn btn-success" data-toggle="tooltip" data-placement="top" title="Tooltip on top"><i className="fas fa-check"></i></button>
+                    <button type="button" className="btn btn-danger"><i className="fas fa-times"></i></button>
                   </div>
                 </td>
               </tr>
@@ -49,9 +48,9 @@ const RequestTable = () => {
                 <td>7/10</td>
                 <td>
                   <div className="d-flex justify-content-around">
-                    <button type="button" class="btn btn-primary"><i class="far fa-eye"></i></button>
-                    <button type="button" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Tooltip on top"><i class="fas fa-check"></i></button>
-                    <button type="button" class="btn btn-danger"><i class="fas fa-times"></i></button>
+                    <button type="button" className="btn btn-primary"><i className="far fa-eye"></i></button>
+                    <button type="button" className="btn btn-success" data-toggle="tooltip" data-placement="top" title="Tooltip on top"><i className="fas fa-check"></i></button>
+                    <button type="button" className="btn btn-danger"><i className="fas fa-times"></i></button>
                   </div>
                 </td>
               </tr>
@@ -59,7 +58,6 @@ const RequestTable = () => {
           </table>
         </div>
       </div>
-    </div>
   )
 }
 

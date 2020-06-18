@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import About from './pages/About';
 import Login from './pages/Login';
 import CharityList from './pages/CharityList';
+import CharityDetail from './pages/CharityDetail';
 import RegisterCharity from './pages/RegisterCharity';
 import Donate from './pages/Donate';
 import Prepare from './pages/Prepare';
@@ -19,6 +20,7 @@ const App = () => {
         <Route exact path="/about" component={About} />
         <Route exact path="/login" component={Login} />
         <Route exact path="/charities" component={CharityList} />
+        <Route exact path="/charities/:id" component={CharityDetail} />
         <PrivateRoute exact path="/register-charity" component={RegisterCharity} />
         <Route exact path="/donate" component={Donate} />
         <Route exact path="/prepare" component={Prepare} />

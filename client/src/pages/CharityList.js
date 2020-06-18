@@ -84,7 +84,7 @@ const CharityList = () => {
                 authentication.isAuthenticated &&
                 <div className="text-right mb-2">
                   <Link to={'/register-charity'}>
-                    <button type="button" className="btn btn-outline-primary">Register new charity organization</button>
+                    <button type="button" className="btn btn-outline-primary"><i class="fas fa-plus"></i> Register charity organization</button>
                   </Link>
                 </div>
               }
@@ -133,6 +133,7 @@ const CharityList = () => {
                   }) =>
                     <Charity
                       key={_id}
+                      charityId={_id}
                       charityDisplayName={charityDisplayName}
                       description={description}
                       logo={logo}
