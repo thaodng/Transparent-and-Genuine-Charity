@@ -15,6 +15,16 @@ exports.createCharity = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    data: charity
+    charity
+  });
+});
+
+
+exports.getCharities = asyncHandler(async (req, res, next) => {
+  const charities = await Charity.find();
+
+  res.status(200).json({
+    success: true,
+    charities
   });
 });
