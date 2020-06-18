@@ -34,12 +34,16 @@ exports.login = (req, res, next) => {
       return next(new createError(400, errMessage));
     }
 
-    sendTokenResponse(200, res, user);
+    sendTokenResponse(200, user, req, res, next);
   })(req, res)
 };
 
 
-const sendTokenResponse = (statusCode, res, user) => {
+const sendTokenResponse = (statusCode, user, req, res, next) => {
+  if (req.body.ethAddress !== user.ethAddress) {
+    return next(new createError(400, `Ethereum address doesn't match current account`));
+  }
+
   const payload = {
     id: user.id,
     email: user.email,
