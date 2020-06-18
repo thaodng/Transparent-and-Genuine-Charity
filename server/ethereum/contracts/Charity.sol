@@ -10,6 +10,11 @@ struct Request {
     uint256 approvalCount; // number of donors have approved this request, this mean not voing equal to decline request
 }
 
+struct Member {
+    address payable member;
+    uint256 value;
+}
+
 // contract factory deploy another contract
 contract CharityFactory {
     Charity[] public deployedCharities;
@@ -36,7 +41,8 @@ contract Charity {
     uint256 public minimumContribution;
     string public registrationNumber;
     mapping(address => bool) donors;
-    uint256 public donorsCount;
+    uint256 public membersCount;
+    Member[] public members;
     Request[] public requests;
 
     constructor(
@@ -62,7 +68,13 @@ contract Charity {
         );
 
         donors[msg.sender] = true;
-        donorsCount++;
+        membersCount++;
+
+        Member memory newMember = Member({
+            member: msg.sender,
+            value: msg.value
+        });
+        members.push(newMember);
     }
 
     function createRequest(
@@ -101,7 +113,7 @@ contract Charity {
         Request storage request = requests[index]; // point to the same memory
 
         require(
-            request.approvalCount > (donorsCount / 2),
+            request.approvalCount > (membersCount / 2),
             "The number of approval donors are not enough!!"
         );
         require(!request.completed, "This request has been completed");
@@ -130,8 +142,8 @@ contract Charity {
             admin,
             minimumContribution,
             registrationNumber,
-            donorsCount,
             address(this).balance,
+            membersCount,
             requests.length
         );
     }
