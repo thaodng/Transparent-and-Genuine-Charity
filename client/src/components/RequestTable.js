@@ -1,8 +1,8 @@
 import React from 'react'
 import web3 from '../contracts/web3';
 
-const RequestTable = ({ requests, donorsCount, onApprove }) => {
-  
+const RequestTable = ({ requests, donorsCount, onCallback, isAuthenticated }) => {
+
   return (
     <div className="row">
       <div className="col-12">
@@ -36,18 +36,21 @@ const RequestTable = ({ requests, donorsCount, onApprove }) => {
                         : <td>Pending</td>
                     }
                     <td>
-                      <div className="d-flex justify-content-around">
-                        <button
-                          type="button"
-                          className="btn btn-primary"
-                          data-toggle="tooltip"
-                          data-placement="top"
-                          title="Accept request"
-                          onClick={() => onApprove(index)}
-                        >
-                          Accept
-                        </button>
-                      </div>
+                      {
+                        !request.completed &&
+                        <div className="d-flex justify-content-around">
+                          <button
+                            type="button"
+                            className="btn btn-primary"
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            title="Accept request"
+                            onClick={() => onCallback(index)}
+                          >
+                            {isAuthenticated ? 'Finalize' : 'Accept'}
+                          </button>
+                        </div>
+                      }
                     </td>
                   </tr>
                 ))

@@ -78,7 +78,20 @@ const CharityDetail = () => {
     });
 
     const copyRequests = [...requests];
-    copyRequests[index].approvalCount = parseInt(copyRequests[index].approvalCount) +1;
+    copyRequests[index].approvalCount = parseInt(copyRequests[index].approvalCount) + 1;
+    setRequests(copyRequests);
+  };
+
+  const onFinalize = async (index) => {
+    const charity = Charity(ethAddress);
+
+    const accounts = await web3.eth.getAccounts();
+    await charity.methods.finalizeRequest(index).send({
+      from: accounts[0]
+    });
+
+    const copyRequests = [...requests];
+    copyRequests[index].completed = true;
     setRequests(copyRequests);
   };
 
@@ -135,7 +148,12 @@ const CharityDetail = () => {
       {
         (selectedOption === options[0] || selectedOption === options[2]) &&
         <>
-          <RequestTable requests={requests} donorsCount={contract.donorsCount} onApprove={onApprove} />
+          <RequestTable
+            requests={requests}
+            donorsCount={contract.donorsCount}
+            onCallback={isAuthenticated ? onFinalize : onApprove}
+            isAuthenticated={isAuthenticated}
+          />
           {
             isAuthenticated &&
             <Link
