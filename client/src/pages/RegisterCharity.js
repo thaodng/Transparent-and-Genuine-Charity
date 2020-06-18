@@ -1,32 +1,28 @@
-import React, { useState, useEffect } from 'react'
 import axios from 'axios';
+import React, { useState, useEffect, useContext } from 'react'
 import { Link, useHistory } from 'react-router-dom';
-import web3 from '../contracts/web3';
-import factory from '../contracts/factory';
+import { AuthContext } from '../context/AuthContext';
+
 import { LOGO_URL, MY_API, API_MANAGER } from '../apis/config';
+import factory from '../contracts/factory';
+
+// ethereum: { manager, minumim, registrationNumber}
+// database: { registrationNumber, charityDisplayName, description, logo}
 
 const RegisterCharity = () => {
   const history = useHistory();
-  const [loading, setLoading] = useState(true);
-  const [account, setAccount] = useState('');
+  const { authentication: { account } } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+
   const [charityDisplayName, setCharityDisplayName] = useState('');
   const [registrationNumber, setRegistrationNumber] = useState('');
   const [description, setDescription] = useState('');
   const [minumum, setMinumum] = useState('');
-  const [logo, setLogo] = useState('');
+  
+  const [logo, setLogo] = useState(''); // file
   const [logoUrl, setLogoUrl] = useState(LOGO_URL);
   const [filename, setFilename] = useState('Choosen logo');
-
-  useEffect(() => {
-    const getInfo = async () => {
-      const accounts = await web3.eth.getAccounts();
-      setAccount(accounts[0]);
-    };
-    getInfo();
-    setLoading(false);
-  }, [])
-
 
   const onChoosenLogo = async (e) => {
     const file = e.target.files[0];
@@ -60,17 +56,19 @@ const RegisterCharity = () => {
     console.log(logo.name);
     setLoading(true);
     setMessage('Please wait. We are handling your request!!');
+
     try {
       await axios.post(API_MANAGER,
         { registrationNumber, charityDisplayName, description, logo: logoUrl }
       );
 
-      await factory.methods.createCharity(minumum).send({ from: account });
+      await factory.methods.createCharity(minumum, registrationNumber).send({ from: account });
 
       history.goBack();
     } catch (error) {
       setMessage(error.message);
     }
+
     setMessage('');
     setLoading(false);
   };

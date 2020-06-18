@@ -19,17 +19,17 @@ const CharityList = () => {
 
   useEffect(() => {
     const getCharities = async () => {
-      if (charities.length === 0) {
-        const { data: { charitySearchResults } } = await axios.get(PUBLIC_API_URL);
-        // const res = charitySearchResults.filter(ct => ct.logoUrl !== "" && ct.description !== "");
-        setCharities(charitySearchResults);
-        setFilterCharities(charitySearchResults);
-      } else {
-        setFilterCharities(charities);
-      }
+      // if (charities.length === 0) {
+      //   const { data: { charitySearchResults } } = await axios.get(PUBLIC_API_URL);
+      //   // const res = charitySearchResults.filter(ct => ct.logoUrl !== "" && ct.description !== "");
+      //   setCharities(charitySearchResults);
+      //   setFilterCharities(charitySearchResults);
+      // } else {
+      //   setFilterCharities(charities);
+      // }
 
-      const charitiesBlock = await factory.methods.getDeployedCharities().call();
-      console.log(charitiesBlock);
+      // const charitiesBlock = await factory.methods.getDeployedCharities().call();
+      // console.log(charitiesBlock);
 
       setLoading(false);
     };
@@ -54,7 +54,7 @@ const CharityList = () => {
   const onSelect = (eventKey) => {
     setSelectedOption(options[eventKey]);
   };
-
+  
   return (
     <>
       {
