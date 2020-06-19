@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { useParams, Link } from "react-router-dom";
-import { DropdownButton, Dropdown, Spinner } from 'react-bootstrap';
+import { DropdownButton, Dropdown } from 'react-bootstrap';
 import { AuthContext } from '../context/AuthContext';
 import { CharityContext } from '../context/CharityContext';
 import Detail from '../components/Detail';
@@ -22,6 +22,8 @@ const CharityDetail = () => {
   const { charityDisplayName, description, logo, registrationNumber, ethAddress } = state;
   const [members, setMembers] = useState([]);
   const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
     const getSummary = async () => {
@@ -70,29 +72,46 @@ const CharityDetail = () => {
   };
 
   const onApprove = async (index) => {
-    const charity = Charity(ethAddress);
+    setLoading(true);
+    setMessage('Please wait. We are handling your request!');
+    try {
+      const charity = Charity(ethAddress);
+      const accounts = await web3.eth.getAccounts();
+      await charity.methods.approveRequest(index).send({
+        from: accounts[0]
+      });
 
-    const accounts = await web3.eth.getAccounts();
-    await charity.methods.approveRequest(index).send({
-      from: accounts[0]
-    });
+      const copyRequests = [...requests];
+      copyRequests[index].approvalCount = parseInt(copyRequests[index].approvalCount) + 1;
+      setRequests(copyRequests);
 
-    const copyRequests = [...requests];
-    copyRequests[index].approvalCount = parseInt(copyRequests[index].approvalCount) + 1;
-    setRequests(copyRequests);
+    } catch (err) {
+      setMessage(err.message);
+    }
+
+    setLoading(false);
   };
 
   const onFinalize = async (index) => {
-    const charity = Charity(ethAddress);
+    setLoading(true);
+    setMessage('Please wait. We are handling your request!');
 
-    const accounts = await web3.eth.getAccounts();
-    await charity.methods.finalizeRequest(index).send({
-      from: accounts[0]
-    });
+    try {
+      const charity = Charity(ethAddress);
+      const accounts = await web3.eth.getAccounts();
+      await charity.methods.finalizeRequest(index).send({
+        from: accounts[0]
+      });
 
-    const copyRequests = [...requests];
-    copyRequests[index].completed = true;
-    setRequests(copyRequests);
+      const copyRequests = [...requests];
+      copyRequests[index].completed = true;
+      setRequests(copyRequests);
+    } catch (error) {
+      setMessage(error.message);
+
+    }
+
+    setLoading(false);
   };
 
   return (
@@ -137,6 +156,7 @@ const CharityDetail = () => {
           balance={contract.balance}
           minimumContribution={contract.minimumContribution}
           donorsCount={contract.donorsCount}
+          setMessage={setMessage}
         />
       }
 
@@ -153,6 +173,7 @@ const CharityDetail = () => {
             donorsCount={contract.donorsCount}
             onCallback={isAuthenticated ? onFinalize : onApprove}
             isAuthenticated={isAuthenticated}
+            loading={loading}
           />
           {
             isAuthenticated &&
@@ -162,10 +183,18 @@ const CharityDetail = () => {
                 state: { ethAddress }
               }}
             >
-              <button className="btn btn-primary active w-100"> Create new request donate </button>
+              {
+                <button className="btn btn-primary active w-100"> Create new request donate </button>
+              }
             </Link>
           }
         </>
+      }
+      {
+        message &&
+        <div className="alert alert-primary mt-3" role="alert">
+          {message}
+        </div>
       }
     </div>
   )

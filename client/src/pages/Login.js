@@ -80,10 +80,8 @@ const Login = () => {
             loading ?
               <div className="text-right">
                 <div className="spinner-grow text-primary" role="status" />
-                <div className="spinner-grow text-secondary" role="status" />
-                <div className="spinner-grow text-danger" role="status" />
-                <div className="spinner-grow text-dark" role="status" />
-                <div className="spinner-grow text-info" role="status" />
+                <div className="spinner-grow text-primary" role="status" />
+                <div className="spinner-grow text-primary" role="status" />
               </div> :
               <>
                 <p className="text-monospace text-center text-secondary">

@@ -1,7 +1,7 @@
 import React from 'react'
 import web3 from '../contracts/web3';
 
-const RequestTable = ({ requests, donorsCount, onCallback, isAuthenticated }) => {
+const RequestTable = ({ requests, donorsCount, onCallback, isAuthenticated, loading }) => {
 
   return (
     <div className="row">
@@ -39,16 +39,24 @@ const RequestTable = ({ requests, donorsCount, onCallback, isAuthenticated }) =>
                       {
                         !request.completed &&
                         <div className="d-flex justify-content-around">
-                          <button
-                            type="button"
-                            className="btn btn-primary"
-                            data-toggle="tooltip"
-                            data-placement="top"
-                            title="Accept request"
-                            onClick={() => onCallback(index)}
-                          >
-                            {isAuthenticated ? 'Finalize' : 'Accept'}
-                          </button>
+                          {
+                            loading
+                              ? <div className="text-right">
+                                <div className="spinner-grow text-primary" role="status" />
+                              </div>
+                              :
+                              <button
+                                type="button"
+                                className="btn btn-primary"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="Accept request"
+                                onClick={() => onCallback(index)}
+                              >
+                                {isAuthenticated ? 'Finalize' : 'Accept'}
+                              </button>
+                          }
+
                         </div>
                       }
                     </td>

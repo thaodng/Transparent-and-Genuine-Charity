@@ -50,11 +50,13 @@ const Prepare = ({ location: { state } }) => {
   const [description, setDescription] = useState('');
   const [totalAmount, setTotalAmount] = useState(0);
   const [recipient, setRecipient] = useState('');
+  const [loading, setLoading] = useState(false)
+  const [message, setMessage] = useState('');
 
 
   const onCreateRequest = async () => {
-    // setState({ loading: true, errorMessage: '' });
-    console.log(state.ethAddress);
+    setLoading(true);
+    setMessage('Please wait. We are handling your request!!');
     const charity = Charity(state.ethAddress);
     const totalString = totalAmount + '';
 
@@ -65,14 +67,12 @@ const Prepare = ({ location: { state } }) => {
         .createRequest(recipient, web3.utils.toWei(totalString, 'ether'), description)
         .send({ from: accounts[0] });
 
-      // history.push(`/charities`);
+      history.push('/thankyou');
     } catch (err) {
-      console.log(err.message);
-      // setState({ errorMessage: err.message });
+      setMessage(err.message);
     }
 
-    // setState({ loading: false });
-    history.push('/thankyou');
+    setLoading(false);
   };
 
   const onBack = () => {
@@ -131,17 +131,31 @@ const Prepare = ({ location: { state } }) => {
           <FontAwesomeIcon className={"ml-3 text-dark"} size='1x' icon={faEthereum} />
         </p>
       </div>
-      <p className="text-monospace text-right text-secondary">
-        <button className="btn btn-primary active" type="button" onClick={onBack}>Back</button>
-        {" "}
-        <button
-          className="btn btn-primary active"
-          type="button"
-          onClick={onCreateRequest}
-        >
-          Create request
+      {
+        loading ?
+          <div className="text-center">
+            <div className="spinner-grow text-primary" role="status" />
+            <div className="spinner-grow text-primary" role="status" />
+            <div className="spinner-grow text-primary" role="status" />
+          </div> :
+          <p className="text-monospace text-right text-secondary">
+            <button className="btn btn-primary active" type="button" onClick={onBack}>Back</button>
+            {" "}
+            <button
+              className="btn btn-primary active"
+              type="button"
+              onClick={onCreateRequest}
+            >
+              Create request
           </button>
-      </p>
+          </p>
+      }
+      {
+        message &&
+        <div className="alert alert-primary" role="alert">
+          {message}
+        </div>
+      }
     </div>
   )
 }

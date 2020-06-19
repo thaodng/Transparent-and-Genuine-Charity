@@ -20,7 +20,7 @@ const RegisterCharity = () => {
   const [registrationNumber, setRegistrationNumber] = useState('');
   const [description, setDescription] = useState('');
   const [minumum, setMinumum] = useState('');
-  
+
   const [logo, setLogo] = useState(''); // file
   const [logoUrl, setLogoUrl] = useState('');
   const [filename, setFilename] = useState('Choosen logo');
@@ -143,10 +143,8 @@ const RegisterCharity = () => {
             loading ?
               <div className="text-right">
                 <div className="spinner-grow text-primary" role="status" />
-                <div className="spinner-grow text-secondary" role="status" />
-                <div className="spinner-grow text-danger" role="status" />
-                <div className="spinner-grow text-dark" role="status" />
-                <div className="spinner-grow text-info" role="status" />
+                <div className="spinner-grow text-primary" role="status" />
+                <div className="spinner-grow text-primary" role="status" />
               </div> :
               <>
                 <p className="py-4 text-monospace text-right text-secondary">

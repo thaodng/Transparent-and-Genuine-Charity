@@ -6,17 +6,18 @@ import web3 from '../contracts/web3';
 
 
 const Detail = ({ charityDisplayName, description, logo, registrationNumber, ethAddress,
-  manager, balance, minimumContribution, donorsCount
+  manager, balance, minimumContribution, donorsCount, setMessage
 }) => {
   const history = useHistory();
 
   const [value, setValue] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const onSubmit = async () => {
     const charity = Charity(ethAddress);
-
-    // setState({ loading: true, errorMessage: '' });
-
+    setLoading(true);
+    setMessage('Please wait. We are handling your request!');
+  
     try {
       const accounts = await web3.eth.getAccounts();
       await charity.methods.donate().send({
@@ -24,12 +25,12 @@ const Detail = ({ charityDisplayName, description, logo, registrationNumber, eth
         value: web3.utils.toWei(value, 'ether')
       });
       history.push('/charities');
-      
+
     } catch (err) {
-      // setState({ errorMessage: err.message });
+      setMessage(err.message);
     }
 
-    // setState({ loading: false, value: '' });
+    setLoading(false);
     setValue('');
   };
 
@@ -63,7 +64,7 @@ const Detail = ({ charityDisplayName, description, logo, registrationNumber, eth
 
         <div className="d-flex justify-content-start my-2">
           <p className="h5 text-secondary">Charity balance: </p>
-          <p className="h5">{balance / 1000000000000000000} wei</p>
+          <p className="h5">{balance / 1000000000000000000} eth</p>
         </div>
 
         <div className="d-flex justify-content-start my-2">
@@ -89,7 +90,15 @@ const Detail = ({ charityDisplayName, description, logo, registrationNumber, eth
 
           </div>
           <div className="col-md-2">
-            <button className="btn btn-primary active w-100" onClick={onSubmit}>Contribute</button>
+            {
+              loading
+                ? <div className="text-right">
+                  <div className="spinner-grow text-primary" role="status" />
+                  <div className="spinner-grow text-primary" role="status" />
+                  <div className="spinner-grow text-primary" role="status" />
+                </div>
+                : <button className="btn btn-primary active w-100" onClick={onSubmit}>Contribute</button>
+            }
           </div>
         </div>
       </div>
