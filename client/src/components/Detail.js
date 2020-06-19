@@ -24,7 +24,7 @@ const Detail = ({ charityDisplayName, description, logo, registrationNumber, eth
         from: accounts[0],
         value: web3.utils.toWei(value, 'ether')
       });
-      history.push('/charities');
+      history.push('/thankyou');
 
     } catch (err) {
       setMessage(err.message);

@@ -67,7 +67,7 @@ const Prepare = ({ location: { state } }) => {
         .createRequest(recipient, web3.utils.toWei(totalString, 'ether'), description)
         .send({ from: accounts[0] });
 
-      history.push('/thankyou');
+      history.push('/charities');
     } catch (err) {
       setMessage(err.message);
     }
