@@ -114,7 +114,7 @@ const RegisterCharity = () => {
               id="minimum"
               className="form-control form-control-m"
               type="text"
-              placeholder="Minimum donate"
+              placeholder="Minimum donate in wei"
               onChange={(e) => setMinumum(e.target.value)}
             />
           </div>
